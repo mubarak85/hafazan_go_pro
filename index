@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Rekod Hafazan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 p-5">
+
+    <div class="w-full max-w-md mx-auto bg-white p-6 rounded-3xl shadow-xl">
+        <h1 class="text-xl font-black text-emerald-900 mb-6 text-center border-b pb-4">REKOD HAFAZAN</h1>
+        
+        <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-2xl mb-4">
+            <input type="text" id="id-input" placeholder="ID Pelajar" class="w-full p-3 mb-3 border rounded-xl">
+            <input type="number" id="input-muka-surat" min="1" max="604" 
+                placeholder="Muka Surat (1-604)" oninput="autoKesanQuran()"
+                class="w-full p-3 border rounded-xl font-bold text-lg focus:ring-2 focus:ring-emerald-600 outline-none">
+
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                    <span class="text-[9px] text-slate-400 font-bold block uppercase">JUZUK</span>
+                    <span id="auto-juzuk" class="text-sm font-black text-slate-800">-</span>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                    <span class="text-[9px] text-slate-400 font-bold block uppercase">SURAH</span>
+                    <span id="auto-surah" class="text-sm font-black text-emerald-700 truncate block">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <button onclick="hantar('TALAQQI', 10)" class="w-full bg-blue-600 text-white p-3 rounded-xl font-bold">TALAQQI (+10)</button>
+            <button onclick="hantar('HAFAZAN', 20)" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold">HAFAZAN (+20)</button>
+            <button onclick="hantar('MURAJAAH', 15)" class="w-full bg-amber-600 text-white p-3 rounded-xl font-bold">MURAJAAH (+15)</button>
+        </div>
+    </div>
+
+    <script>
+        const surahMap = [
+            {m: 1, s: "Al-Fatihah"}, {m: 2, s: "Al-Baqarah"}, {m: 50, s: "Ali 'Imran"}, {m: 77, s: "An-Nisa'"}, {m: 106, s: "Al-Ma'idah"}, {m: 128, s: "Al-An'am"}, {m: 151, s: "Al-A'raf"}, {m: 177, s: "Al-Anfal"}, {m: 187, s: "At-Taubah"}, {m: 208, s: "Yunus"}, {m: 221, s: "Hud"}, {m: 235, s: "Yusuf"}, {m: 249, s: "Ar-Ra'd"}, {m: 255, s: "Ibrahim"}, {m: 262, s: "Al-Hijr"}, {m: 267, s: "An-Nahl"}, {m: 282, s: "Al-Isra'"}, {m: 293, s: "Al-Kahfi"}, {m: 305, s: "Maryam"}, {m: 312, s: "Taha"}, {m: 322, s: "Al-Anbiya'"}, {m: 332, s: "Al-Hajj"}, {m: 342, s: "Al-Mu'minun"}, {m: 350, s: "An-Nur"}, {m: 359, s: "Al-Furqan"}, {m: 367, s: "Asy-Syu'ara'"}, {m: 377, s: "An-Naml"}, {m: 385, s: "Al-Qasas"}, {m: 396, s: "Al-'Ankabut"}, {m: 404, s: "Ar-Rum"}, {m: 411, s: "Luqman"}, {m: 415, s: "As-Sajdah"}, {m: 418, s: "Al-Ahzab"}, {m: 428, s: "Saba'"}, {m: 434, s: "Fatir"}, {m: 440, s: "Yasin"}, {m: 446, s: "As-Saffat"}, {m: 453, s: "Sad"}, {m: 458, s: "Az-Zumar"}, {m: 467, s: "Ghafir"}, {m: 477, s: "Fussilat"}, {m: 483, s: "Asy-Syura"}, {m: 489, s: "Az-Zukhruf"}, {m: 496, s: "Ad-Dukhan"}, {m: 499, s: "Al-Jathiyah"}, {m: 502, s: "Al-Ahqaf"}, {m: 507, s: "Muhammad"}, {m: 511, s: "Al-Fath"}, {m: 515, s: "Al-Hujurat"}, {m: 518, s: "Qaf"}, {m: 520, s: "Adz-Dzariyat"}, {m: 524, s: "At-Tur"}, {m: 526, s: "An-Najm"}, {m: 528, s: "Al-Qamar"}, {m: 531, s: "Ar-Rahman"}, {m: 534, s: "Al-Waqi'ah"}, {m: 537, s: "Al-Hadid"}, {m: 542, s: "Al-Mujadilah"}, {m: 545, s: "Al-Hasyr"}, {m: 549, s: "Al-Mumtahanah"}, {m: 551, s: "As-Saff"}, {m: 553, s: "Al-Jumu'ah"}, {m: 554, s: "Al-Munafiqun"}, {m: 556, s: "At-Taghabun"}, {m: 558, s: "At-Talaq"}, {m: 560, s: "At-Tahrim"}, {m: 562, s: "Al-Mulk"}, {m: 564, s: "Al-Qalam"}, {m: 566, s: "Al-Haqqah"}, {m: 568, s: "Al-Ma'arij"}, {m: 570, s: "Nuh"}, {m: 572, s: "Al-Jinn"}, {m: 574, s: "Al-Muzzammil"}, {m: 575, s: "Al-Muddaththir"}, {m: 577, s: "Al-Qiyamah"}, {m: 578, s: "Al-Insan"}, {m: 580, s: "Al-Mursalat"}, {m: 582, s: "An-Naba'"}, {m: 583, s: "An-Nazi'at"}, {m: 585, s: "Abasa"}, {m: 586, s: "At-Takwir"}, {m: 587, s: "Al-Infitar"}, {m: 587, s: "Al-Mutaffifin"}, {m: 589, s: "Al-Inshiqaq"}, {m: 589, s: "Al-Buruj"}, {m: 590, s: "At-Tariq"}, {m: 591, s: "Al-A'la"}, {m: 591, s: "Al-Ghashiyah"}, {m: 592, s: "Al-Fajr"}, {m: 593, s: "Al-Balad"}, {m: 594, s: "Ash-Shams"}, {m: 595, s: "Al-Lail"}, {m: 595, s: "Ad-Duha"}, {m: 596, s: "Ash-Sharh"}, {m: 596, s: "At-Tin"}, {m: 597, s: "Al-'Alaq"}, {m: 597, s: "Al-Qadr"}, {m: 598, s: "Al-Bayyinah"}, {m: 598, s: "Az-Zalzalah"}, {m: 599, s: "Al-'Adiyat"}, {m: 599, s: "Al-Qari'ah"}, {m: 600, s: "At-Takathur"}, {m: 600, s: "Al-'Asr"}, {m: 601, s: "Al-Humazah"}, {m: 601, s: "Al-Fil"}, {m: 602, s: "Quraish"}, {m: 602, s: "Al-Ma'un"}, {m: 603, s: "Al-Kawthar"}, {m: 603, s: "Al-Kafirun"}, {m: 603, s: "An-Nasr"}, {m: 604, s: "Al-Masad"}, {m: 604, s: "Al-Ikhlas"}, {m: 604, s: "Al-Falaq"}, {m: 604, s: "An-Nas"}
+        ];
+
+        function autoKesanQuran() {
+            const ms = parseInt(document.getElementById("input-muka-surat").value);
+            if (ms >= 1 && ms <= 604) {
+                document.getElementById("auto-juzuk").textContent = "Juzuk " + Math.ceil(ms / 20);
+                const surahData = surahMap.slice().reverse().find(i => ms >= i.m);
+                document.getElementById("auto-surah").textContent = surahData ? surahData.s : "-";
+            }
+        }
+
+        function hantar(fasa, mata) {
+            // --- MASUKKAN URL WEB APP ANDA DI SINI ---
+            const url = "https://script.google.com/macros/s/AKfycbyicXKxQh_8ZvXuBg_DJURHq7NJ8oTllYOcjetVBWjvDd4pc1vNion1cXQcfD1UtocblQ/exec"; 
+            // ----------------------------------------
+            const formData = new FormData();
+            formData.append('id', document.getElementById('id-input').value);
+            formData.append('fasa', fasa);
+            formData.append('juzuk', document.getElementById('auto-juzuk').innerText);
+            formData.append('surah', document.getElementById('auto-surah').innerText);
+            formData.append('muka', document.getElementById('input-muka-surat').value);
+            formData.append('mata', mata);
+
+            fetch(url, { method: 'POST', body: formData })
+            .then(() => alert("Berjaya disimpan!"))
+            .catch(() => alert("Gagal, sila semak URL/CORS"));
+        }
+    </script>
+</body>
+</html>
